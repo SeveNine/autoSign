@@ -1,0 +1,4 @@
+sign:
+  targetPath: http://kq.neusoft.com
+  driverPath: E:\\Work\\Nine\\autosign\\src\\main\\resources\\chromedriver.exe
+  accountPath: E:\\Work\\Nine\\autosign\\src\\main\\resources\\AccountList.xml
