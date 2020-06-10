@@ -54,6 +54,46 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!-- 是否要把分离jar包路径放到manifest的classpath中 -->
+                            <addClasspath>true</addClasspath>
+                            <!-- 将pom依赖jar包的classpath指定到mainfest -->
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- 配置maven启动类 -->
+                            <mainClass>com.sevenine.autosign.AutosignApplication</mainClass> <!-- 此处为主入口-->
+                        </manifest>
+                        <!-- 将本地jar包（未在pom中定义，maven-jar-plugin不会放到mainfest中）的classpath指定到mainfest -->
+                        <manifestEntries>
+                            <Class-Path>lib/*</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!-- 导出所有的依赖jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

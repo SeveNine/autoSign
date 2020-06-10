@@ -1,5 +1,7 @@
 package com.sevenine.autosign.utils;
 
+import com.sevenine.autosign.config.Config;
+import com.sevenine.autosign.repository.AccountRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,10 @@ import java.util.Random;
 public class ScheuledTask {
 
     Logger logger = LoggerFactory.getLogger(Sign.class);
-
+    @Autowired
+    private Config config;
+    @Autowired
+    private AccountRepository accountRepository;
     @Autowired
     private Sign sign;
 
@@ -24,28 +29,35 @@ public class ScheuledTask {
     @Scheduled(cron = "30 15 8 * * 2-7")
     public void morning(){
         sleepRandomTime(20*1000);
-        sign.sign();
-
+        sign.sign(accountRepository.getAccountReadXml(config.getAccountPath()));
     }
 
     // 周一 三 五 六晚上17：32：30
     @Scheduled(cron = "30 32 17 * * 2,4,6,7")
     public void afternoon(){
         sleepRandomTime(20*1000);
-        sign.sign();
+        sign.sign(accountRepository.getAccountReadXml(config.getAccountPath()));
     }
+
     // 周二 四晚上21：00：30
     @Scheduled(cron = "30 00 21 * * 3,5")
     public void night(){
         sleepRandomTime(20*1000);
-        sign.sign();
+        sign.sign(accountRepository.getAccountReadXml(config.getAccountPath()));
     }
 
-//    @Scheduled(cron = "00 52 15 * * ?")
+    // 周一 周三 周五晚上21：00：30
+    @Scheduled(cron = "30 00 21 * * 2,4,6")
+    public void nightNNS(){
+        sleepRandomTime(20*1000);
+        sign.sign(accountRepository.getAccountReadXml(config.getAccountPathNNS()));
+    }
+
+//    @Scheduled(cron = "00 29 09 * * ?")
 //    public void test(){
-//        logger.info("打卡启动！");\
+//        logger.info("打卡启动！");
 //        sleepRandomTime(20*1000);
-//        sign.sign();
+//        sign.sign(accountRepository.getAccountReadXml(config.getAccountPath()));
 //    }
 
 

@@ -18,4 +18,8 @@ public class Config {
     private String driverPath;
 
     private String accountPath;
+
+    private String accountPathNNS;
+
+    private int reTryCount;
 }

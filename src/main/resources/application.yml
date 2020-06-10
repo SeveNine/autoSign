@@ -1,4 +1,11 @@
 sign:
+#  考勤网址
   targetPath: http://kq.neusoft.com
+#  驱动路径
   driverPath: E:\\Work\\Nine\\autosign\\src\\main\\resources\\chromedriver.exe
+#  账户列表
   accountPath: E:\\Work\\Nine\\autosign\\src\\main\\resources\\AccountList.xml
+#  996账户列表
+  accountPathNNS: E:\\Work\\Nine\\autosign\\src\\main\\resources\\AccountList996.xml
+#  重试次数
+  reTryCount: 3

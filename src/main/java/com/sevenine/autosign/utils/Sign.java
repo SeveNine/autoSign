@@ -32,17 +32,13 @@ public class Sign {
     Logger logger = LoggerFactory.getLogger(Sign.class);
 
     @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
     private Config config;
 
     /**
      * 滑动验证码签到
      * created by xu-jp on 2020/5/27
      **/
-    public void sign(){
-        LinkedHashMap<String, Account> accounts = accountRepository.getAccountReadXml(config.getAccountPath());
+    public void sign(LinkedHashMap<String, Account> accounts){
         // 实际打卡人数
         int record = 0;
         // 需要打卡人数
@@ -51,9 +47,8 @@ public class Sign {
             Account account = accounts.get(key);
             // 判断是否需要打卡
             if("false".equals(account.getIsValid())){
-                logger.info("=={}==跳过打卡",account.getUserName());
+                logger.info("=={}==跳过打卡",account.getRealName());
             }else{
-                logger.info("=={}==进行打卡",account.getUserName());
                 needRecord++;
                 // 打卡次数
                 int counter = 0;
@@ -62,6 +57,10 @@ public class Sign {
                 while(!isSign){
                     WebDriver driver = null;
                     try {
+                        // 最多打三次卡，密码可能被修改，尝试次数过多会锁定账户
+                        if (++counter > config.getReTryCount()) {
+                            break;
+                        }
                         //指定浏览器驱动路径
                         System.setProperty ( "webdriver.chrome.driver", config.getDriverPath() );
                         //初始化浏览器名为driver
@@ -85,8 +84,16 @@ public class Sign {
                         driver.quit();
                     }
                 }
+                if(isSign){
+                    record++;
+                    logger.info("=={}==打卡次数{}，成功",account.getRealName(),counter);
+                }else{
+                    logger.info("=={}==打卡次数{}，失败!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",account.getRealName(),counter);
+                }
             }
         }
+        logger.info("==打卡成功{}人，失败{}人==",record,needRecord-record);
+
     }
 
     /**
@@ -126,13 +133,13 @@ public class Sign {
         // 将滑动验证码从屏幕截图中剪切出来
         BufferedImage eleScreenshot = fullImg.getSubimage(point.getX(), point.getY(), eleWidth, eleHeight);
         ImageIO.write(eleScreenshot, "png", screenshot);
-        System.out.println("文件在："+screenshot.toPath());
-        File screenshotLocation = new File("img\\sliderImg.png");
-        copyFile(screenshot,screenshotLocation);
+//        System.out.println("文件在："+screenshot.toPath());
+//        File screenshotLocation = new File("img\\sliderImg.png");
+//        copyFile(screenshot,screenshotLocation);
 
         actions = new Actions(driver);
         // 计算需要滑动的距离
-        distance = calcMoveDistance(eleWidth);
+        distance = calcMoveDistance(eleWidth,screenshot);
         // 包装移动实体
         List<MoveEntity> list = getMoveEntity(distance);
         // 获取滑块元素
@@ -169,7 +176,7 @@ public class Sign {
             // 获取页面所有td，一行5个td，也可以使用tr判断是否有打卡记录
             List<WebElement> welist = driver.findElements(By.tagName("td"));
             // 若无打卡记录或者没登录成功则打卡（打卡代码会被catch）
-            if(welist.size() <= 5){
+            if(welist.size() < 5){
                 driver.findElement(By.className("mr36")).click();
             }else{
                 // 打过卡，无操作
@@ -205,8 +212,8 @@ public class Sign {
     /**
      * 计算小方块需要移动的距离
      */
-    public static int calcMoveDistance( float bgWrapWidth) throws IOException {
-        BufferedImage fullBI = ImageIO.read(new File("img\\sliderImg.png"));
+    public static int calcMoveDistance( float bgWrapWidth,File file) throws IOException {
+        BufferedImage fullBI = ImageIO.read(file);
         int distance = 0;
         ArrayList<Integer> compareWidth = new ArrayList<Integer>();
         for(int w = 0 ,i = 0; w < fullBI.getWidth(); w++){
@@ -283,24 +290,24 @@ public class Sign {
      * 文件复制
      * created by xu-jp on 2020/6/6
      **/
-    public static void copyFile(File sourceFile,File targetFile)
-            throws IOException {
-
-        FileInputStream input = new FileInputStream(sourceFile);
-        BufferedInputStream inBuff=new BufferedInputStream(input);
-        FileOutputStream output = new FileOutputStream(targetFile);
-        BufferedOutputStream outBuff=new BufferedOutputStream(output);
-        byte[] b = new byte[1024 * 5];
-        int len;
-        while ((len =inBuff.read(b)) != -1) {
-            outBuff.write(b, 0, len);
-        }
-        outBuff.flush();
-        inBuff.close();
-        outBuff.close();
-        output.close();
-        input.close();
-    }
+//    public static void copyFile(File sourceFile,File targetFile)
+//            throws IOException {
+//
+//        FileInputStream input = new FileInputStream(sourceFile);
+//        BufferedInputStream inBuff=new BufferedInputStream(input);
+//        FileOutputStream output = new FileOutputStream(targetFile);
+//        BufferedOutputStream outBuff=new BufferedOutputStream(output);
+//        byte[] b = new byte[1024 * 5];
+//        int len;
+//        while ((len =inBuff.read(b)) != -1) {
+//            outBuff.write(b, 0, len);
+//        }
+//        outBuff.flush();
+//        inBuff.close();
+//        outBuff.close();
+//        output.close();
+//        input.close();
+//    }
 
 
 
