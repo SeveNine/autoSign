@@ -29,7 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
  **/
 @Component
 public class Sign {
-    Logger logger = LoggerFactory.getLogger(Sign.class);
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private Config config;
@@ -167,10 +167,11 @@ public class Sign {
      * 登录并打卡
      * created by xu-jp on 2020/5/27
      **/
-    private boolean loginAndSign(WebDriver driver){
+    private boolean loginAndSign(WebDriver driver) throws InterruptedException {
         // 登录按钮
         WebElement element = driver.findElement(By.id("loginButton"));
         element.click();
+        Thread.sleep(1000);
         // 新增判断早上是否打卡过
         if (this.isMorning()){
             // 获取页面所有td，一行5个td，也可以使用tr判断是否有打卡记录

@@ -1,3 +1,13 @@
+server:
+  port: 9898
+logging:
+  level:
+    root: WARN
+    com.sevenine.autosign: INFO
+  file:
+    name: spring-autosign.log
+
+
 sign:
 #  考勤网址
   targetPath: http://kq.neusoft.com

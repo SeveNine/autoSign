@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+    <account>
+        <realname>程心</realname>
+        <username>chengx</username>
+        <password>123123</password>
+        <isvalid>true</isvalid>
+        <lastsigntime>6060-01-20 17:33:05</lastsigntime>
+    </account>
+</configuration>

@@ -17,7 +17,7 @@ import java.util.Random;
 @Component
 public class ScheuledTask {
 
-    Logger logger = LoggerFactory.getLogger(Sign.class);
+    Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private Config config;
     @Autowired
@@ -26,38 +26,49 @@ public class ScheuledTask {
     private Sign sign;
 
     // 周一到周六早上8：15：30
-    @Scheduled(cron = "30 15 8 * * 2-7")
+    @Scheduled(cron = "30 15 8 * * 1-6")
     public void morning(){
+        logger.info("==早间打卡启动==");
         sleepRandomTime(20*1000);
         sign.sign(accountRepository.getAccountReadXml(config.getAccountPath()));
     }
 
     // 周一 三 五 六晚上17：32：30
-    @Scheduled(cron = "30 32 17 * * 2,4,6,7")
+    @Scheduled(cron = "30 32 17 * * 1,3,5,6")
     public void afternoon(){
+        logger.info("==晚间打卡启动==");
         sleepRandomTime(20*1000);
         sign.sign(accountRepository.getAccountReadXml(config.getAccountPath()));
     }
 
     // 周二 四晚上21：00：30
-    @Scheduled(cron = "30 00 21 * * 3,5")
+    @Scheduled(cron = "30 00 21 * * 2,4")
     public void night(){
+        logger.info("==加班打卡启动==");
         sleepRandomTime(20*1000);
         sign.sign(accountRepository.getAccountReadXml(config.getAccountPath()));
     }
 
     // 周一 周三 周五晚上21：00：30
-    @Scheduled(cron = "30 00 21 * * 2,4,6")
+    @Scheduled(cron = "30 00 21 * * 1,3,5")
     public void nightNNS(){
+        logger.info("==加班打卡启动996==");
         sleepRandomTime(20*1000);
         sign.sign(accountRepository.getAccountReadXml(config.getAccountPathNNS()));
     }
 
-//    @Scheduled(cron = "00 29 09 * * ?")
+//    @Scheduled(cron = "* * * * * 4")
 //    public void test(){
 //        logger.info("打卡启动！");
 //        sleepRandomTime(20*1000);
 //        sign.sign(accountRepository.getAccountReadXml(config.getAccountPath()));
+//    }
+
+//    @Scheduled(cron = "00 03 21 * * WED")
+//    public void test2(){
+//        logger.info("打卡启动！");
+//        sleepRandomTime(20*1000);
+//        sign.sign(accountRepository.getAccountReadXml(config.getAccountPathNNS()));
 //    }
 
 
