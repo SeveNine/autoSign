@@ -75,13 +75,14 @@ public class Sign {
                         while(!this.simulateSlider(driver)){};
                         // 签到
                         isSign = loginAndSign(driver);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
+                        logger.info("捕获到异常");
                         e.printStackTrace();
                     } finally {
                         // 关闭浏览器
-                        driver.quit();
+                        if(driver!=null){
+                            driver.quit();
+                        }
                     }
                 }
                 if(isSign){
